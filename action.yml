@@ -16,7 +16,7 @@ inputs:
     required: true
 outputs:
   should_send_message:
-    description: "`yes|no`, the message should be sent"
+    description: "`yes|no` depending on if the message should be sent"
     value: ${{ steps.determine-notification.outputs.should_send_message }}
 runs:
   using: "composite"
