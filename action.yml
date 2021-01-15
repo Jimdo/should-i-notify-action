@@ -1,0 +1,43 @@
+name: 'Should I notify slack?'
+description: 'Decide if a notification to slack is necessary taking into account the previous build result.'
+branding:
+  icon: 'bell'
+  color: 'green'
+inputs:
+  needs_context:
+    description: 'json representation of the `needs` object in your context (`toJson(needs)`)'
+    required: true
+  branch:
+    description: 'The branch to get the status from'
+    required: true
+    default: 'main'
+  github_token:
+    description: 'A github token (secrets.GITHUB_TOKEN will suffice)'
+    required: true
+outputs:
+  should_send_message:
+    description: "`yes|no`, the message should be sent"
+    value: ${{ steps.determine-notification.outputs.should_send_message }}
+runs:
+  using: "composite"
+  steps:
+    - name: Determine if we need to notify
+      id: determine-notification
+      shell: bash
+      run: |
+        workflow_id=$(curl --header 'authorization: Bearer ${{ inputs.github_token }}' \
+            --header 'content-type: application/json' \
+            https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }} | jq -r .workflow_id)
+        last_status=$(curl --silent --header 'authorization: Bearer ${{ inputs.github_token }}' \
+                      --header 'content-type: application/json' \
+                      "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?per_page=1&status=completed&branch=${{ inputs.branch }}" | jq -r .workflow_runs[0].conclusion)
+
+        needs_context="${{ inputs.needs_context }}"
+
+        if [[ $(echo $needs_context | grep "result: failure") ]]; then
+          echo "::set-output name=should_send_message::yes"
+        elif [[ $last_status == failure ]]; then
+          echo "::set-output name=should_send_message::yes"
+        else
+          echo "::set-output name=should_send_message::no"
+        fi
