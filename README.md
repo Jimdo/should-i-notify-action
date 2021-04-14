@@ -5,9 +5,15 @@ A GitHub action to decide if a status message should be pushed to slack for this
 
 ## How it makes the decision
 
+If the optional input `notify_on_changed_status` is not set or set to the empty string, then:
+
 1. If the current build failed, then it will recommend sending the message
 2. If the current build succeeded, and the previous one failed, then it will recommend sending the message
 3. If the current build succeeded, and the previous one succeeded, then it will recommend NOT sending the message
+
+If the optional input `notify_on_changed_status` is set to a non-empty string, then:
+
+1. If the status of the current and the last build differ, then it will recommend sending the message
 
 ## Inputs
 
@@ -22,6 +28,10 @@ A GitHub action to decide if a status message should be pushed to slack for this
 ### github_token
 
 **required** A github token (secrets.GITHUB_TOKEN will suffice)
+
+### notify_on_changed_status
+
+**optional** Defaults to `''`. See section [How it makes the decision](#how-it-makes-the-decision).
 
 ## Outputs
 
