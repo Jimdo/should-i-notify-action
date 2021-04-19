@@ -22,6 +22,9 @@ outputs:
   should_send_message:
     description: "`yes|no` depending on if the message should be sent"
     value: ${{ steps.determine-notification.outputs.should_send_message }}
+  last_status:
+    description: "status of the last completed workflow"
+    value: ${{ steps.determine-notification.outputs.last_status }}
 runs:
   using: "composite"
   steps:
@@ -41,6 +44,7 @@ runs:
             exit 1
         else
             echo "status of the previous build: $last_status"
+            echo "::set-output name=last_status::$last_status"
         fi
         needs_context="${{ inputs.needs_context }}"
         if [[ $(echo $needs_context | grep "result: failure") ]]; then

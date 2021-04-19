@@ -39,6 +39,10 @@ If the optional input `notify_on_changed_status` is set to a non-empty string, t
 
 `yes|no` depending on if the message should be sent
 
+### last_message
+
+status of the last completed workflow
+
 ## How to use
 
 In this case, the action will take into account the result of `job1` and `job2` for builds only for the `main` branch. 
