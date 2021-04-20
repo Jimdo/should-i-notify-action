@@ -23,8 +23,11 @@ outputs:
     description: "`yes|no` depending on if the message should be sent"
     value: ${{ steps.determine-notification.outputs.should_send_message }}
   last_status:
-    description: "status of the last completed workflow"
+    description: "status of the previously completed workflow (or null)"
     value: ${{ steps.determine-notification.outputs.last_status }}
+  current_status:
+    description: "status of the current workflow"
+    value: ${{ steps.determine-notification.outputs.current_status }}
 runs:
   using: "composite"
   steps:
@@ -52,6 +55,8 @@ runs:
         else
             current_status=success
         fi
+        echo "status of the current build: $current_status"
+        echo "::set-output name=current_status::$current_status"
         if [[ "${{ inputs.notify_on_changed_status }}" ]]; then
             if [[ $current_status == $last_status ]]; then
               echo "::set-output name=should_send_message::no"
