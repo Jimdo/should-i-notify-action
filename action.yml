@@ -36,9 +36,12 @@ runs:
         needs_context="${{ inputs.needs_context }}"
 
         if [[ $(echo $needs_context | grep "result: failure") ]]; then
+          echo "One of the jobs in the "needs" array failed"
           echo "::set-output name=should_send_message::yes"
         elif [[ $last_status == failure ]]; then
+          echo "The last run for this workflow failed so this is a recovery"
           echo "::set-output name=should_send_message::yes"
         else
+          echo "The last run did not fail and none of the jobs in needs failed either"
           echo "::set-output name=should_send_message::no"
         fi
