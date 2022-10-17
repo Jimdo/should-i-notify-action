@@ -37,11 +37,11 @@ runs:
 
         if [[ $(echo $needs_context | grep "result: failure") ]]; then
           echo "One of the jobs in the "needs" array failed"
-          echo "::set-output name=should_send_message::yes"
+          echo "should_send_message=yes" >> $GITHUB_OUTPUT
         elif [[ $last_status == failure ]]; then
           echo "The last run for this workflow failed so this is a recovery"
-          echo "::set-output name=should_send_message::yes"
+          echo "should_send_message=yes" >> $GITHUB_OUTPUT
         else
           echo "The last run did not fail and none of the jobs in needs failed either"
-          echo "::set-output name=should_send_message::no"
+          echo "should_send_message=no" >> $GITHUB_OUTPUT
         fi
