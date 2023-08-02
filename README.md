@@ -54,6 +54,8 @@ slack-workflow-status:
     - job2
   if: always() && github.ref == 'refs/heads/main'
   runs-on: ubuntu-latest
+  permissions:
+    actions: read
   steps:
     - name: Determine if we need to notify
       uses: Jimdo/should-i-notify-action@main
@@ -72,3 +74,5 @@ slack-workflow-status:
         channel: 'notifications-slack-channel'
         name: 'Your great build bot'
 ```
+
+**INFO:** The documentation of slack-workflow-status action [states](https://github.com/Gamesight/slack-workflow-status/pull/41) that the action needs `action: read` permissions.
